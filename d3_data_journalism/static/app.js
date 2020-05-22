@@ -22,20 +22,32 @@ var svg = d3
 var chartGroup = svg.append("g")
   .attr("transform", `translate(${margin.left}, ${margin.top})`);
 
-// Initial Param
+// Initial Params
 var chosenXAxis = "income";
+var chosenYaxis = "obesity";
 
-// function used for updating x-scale var upon click on axis label
+// function used for updating x-scale upon click on axis label
 function xScale(censusData, chosenXAxis) {
   // create scales
   var xLinearScale = d3.scaleLinear()
-    .domain([d3.min(censusData, d => d[chosenXAxis])*.95,
+    .domain([d3.min(censusData, d => d[chosenXAxis])*.87,
       d3.max(censusData, d => d[chosenXAxis]*1.05)
     ])
     .range([0, width]);
 
   return xLinearScale;
+}
 
+// function used for updating x-scale upon click on axis label
+function xScale(censusData, chosenYAxis) {
+  // create scales
+  var YLinearScale = d3.scaleLinear()
+    .domain([d3.min(censusData, d => d[chosenYAxis]),
+      d3.max(censusData, d => d[chosenYAxis])
+    ])
+    .range([height, 0]);
+
+  return yLinearScale;
 }
 
 // function used for updating xAxis var upon click on axis label
@@ -76,10 +88,10 @@ function updateToolTip(chosenXAxis, circlesGroup) {
   }
 
   var toolTip = d3.tip()
-    .attr("class", "tooltip")
+    .attr("class", "d3-tip")
     .offset([80, -60])
     .html(function(d) {
-      return (`${d.obesity}<br>${label} ${d[chosenXAxis]}`);
+      return (`Obesity %: ${d.obesity}<br>${label} ${d[chosenXAxis]}`);
     });
 
   circlesGroup.call(toolTip);
@@ -104,7 +116,7 @@ d3.csv("data.csv").then(function(censusData, err) {
 
   // Create y scale function
   var yLinearScale = d3.scaleLinear()
-    .domain([0, d3.max(censusData, d => d.obesity)*1.1])
+    .domain([d3.min(censusData, d => d.obesity)*0.9, d3.max(censusData, d => d.obesity)*1.03])
     .range([height, 0]);
 
   // Create initial axis functions
@@ -121,6 +133,8 @@ d3.csv("data.csv").then(function(censusData, err) {
   chartGroup.append("g")
     .call(leftAxis);
 
+
+
   // append initial circles
   var circlesGroup = chartGroup.selectAll("circle")
     .data(censusData)
@@ -130,7 +144,28 @@ d3.csv("data.csv").then(function(censusData, err) {
     .attr("cy", d => yLinearScale(d.obesity))
     .attr("r", 20)
     .attr("fill", "teal")
-    .attr("opacity", ".5");
+    .attr("opacity", ".5")
+    // .attr("x", d => xLinearScale(d[chosenXAxis]))
+    // .attr("y", d => yLinearScale( d.obesity))
+    // .attr("alignment-baseline", "middle")
+    // .attr("text-anchor", "middle")
+    // .text(d => d.abbr)
+    // .append("text");
+    //             .classed("stateText", true)
+
+    //Add the Text Elements to the svg
+    var text = chartGroup.selectAll(".stateText")
+                .data(censusData)
+                .enter()
+                .append("text")
+                .classed("stateText", true)
+
+    var textLabels = text
+                .attr("x", d => xLinearScale(d[chosenXAxis]))
+                .attr("y", d => yLinearScale( d.obesity))
+                .attr("alignment-baseline", "middle")
+                .attr("text-anchor", "middle")
+                .text(d => d.abbr);
 
   // Create group for three x-axis labels
   var labelsGroup = chartGroup.append("g")
@@ -163,7 +198,6 @@ d3.csv("data.csv").then(function(censusData, err) {
     .attr("y", 0 - margin.left)
     .attr("x", 0 - (height / 2))
     .attr("dy", "1em")
-    .classed("axis-text", true)
     .text("Obesity %");
 
   // Call updateToolTip function
