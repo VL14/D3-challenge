@@ -1,6 +1,7 @@
  /* STARTER CODE */
   .article {
     margin-top: 20px;
+    align-self: center;
   }
 
   .scatter {
