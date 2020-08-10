@@ -1,4 +1,4 @@
-# Project Description: D3 Challenge
+# Project Description
 This interactive D3.js scatter plot visualizes health risks facing particular demographics. The dataset comes from the U.S. Census Bureau and the Behavioral Risk Factor Surveillance System (https://factfinder.census.gov/faces/nav/jsf/pages/searchresults.xhtml](https://factfinder.census.gov/faces/nav/jsf/pages/searchresults.xhtml). Values plotted include rates of income, obesity, poverty, and age by state. 
 
 ![screenshot](https://github.com/VL14/D3-challenge/blob/master/images/D3_Chart.JPG)
